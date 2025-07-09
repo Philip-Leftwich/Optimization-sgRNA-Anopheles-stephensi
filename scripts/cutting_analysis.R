@@ -1,13 +1,13 @@
 # Cutting and homing when crossed to white eyes ====
 ## Multiple Cas9 lines tested in a split-drive
 
-font_add_google("Open Sans", "Sans")
+
 
 source("scripts/functions.R")
 source("scripts/custom_theme.R")
+font_add_google("Open Sans", "Sans")
 
-
-cutting_tbl <- tbl <-read_data(4)
+cutting_tbl <-read_data(4)
 
 
 cutting_data <- cutting_tbl %>% 
