@@ -5,7 +5,6 @@
 source("scripts/functions.R")
 source("scripts/custom_theme.R")
 
-
 tbl <-read_data(2)
 
 

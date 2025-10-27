@@ -42,7 +42,8 @@ cutting_data <- cutting_tbl %>%
 cutting_data_model <- cutting_data %>% 
   mutate(win = (genotype_A+genotype_AB),
          loss = (genotype_B+genotype_WT),
-         win1=(mosaic_A+mosaic_AB),
+         # change to original code accidental discount of non transgene bearing individuals
+         win1=(mosaic_A+mosaic_AB+mosaic_B+mosaic_WT),
          loss1=((win+loss)- win1)) %>% 
   mutate(id=row_number())
 
@@ -51,9 +52,7 @@ cutting_data_model <- cutting_data %>%
 cut.model.1 <- glmmTMB((cbind(win,loss))~ Cas9_parent+Cas9_grandparent+Line+Cas9_parent:Cas9_grandparent+Cas9_parent:Line+Cas9_grandparent:Line+(1|Line/Cas9_grandparent/Cas9_parent/id), family=binomial, data=cutting_data_model, REML=FALSE)
 
 
-mosaic.model.1 <- glmmTMB((cbind(win1,loss1))~ Cas9_parent+Cas9_grandparent+Line+Cas9_parent:Cas9_grandparent+Cas9_parent:Line+Cas9_grandparent:Line+(1|Line/Cas9_grandparent/Cas9_parent/id), family=binomial, data=cutting_data_model, REML=FALSE)
-
-
+mosaic.model.1 <- glmmTMB((cbind(win1,loss1))~ Cas9_parent+Cas9_grandparent+Line+(1|id), family=binomial, data=cutting_data_model, REML = FALSE)
 
 
 
@@ -86,7 +85,7 @@ cutting_data_model %>%
   ggplot(aes(x=homing_or_cutting, y=count, group=id, colour=Cas9_parent, shape=homing_or_cutting))+
   geom_point(aes(size=win+loss), fill="white", alpha=0.6)+
   geom_line(alpha=0.4, size=0.1)+
-  geom_errorbar(data=total_CI, aes(min=(asymp.LCL*100), max=(asymp.UCL*100), y=response, group=NA),width=0,  size=1.2, position=position_nudge(x=0.4))+
+  geom_errorbar(data=total_CI, aes(min=(asymp.LCL*100), max=(asymp.UCL*100), y=response, group=NA),width=0,  size=1.4, position=position_nudge(x=0.4))+
   geom_point(data=total_CI, aes(y=response*100, group=NA, fill=after_scale(desaturate(lighten(colour, .6), .6))), size=2, position=position_nudge(x=0.4), stroke=0.6)+
   scale_shape_manual(values=c(21,24), labels=c("pink eyes",bquote(cd^sgRNAs)))+
   scale_size(range=c(0,6),
@@ -120,5 +119,5 @@ cutting_data_model %>%
         ggh4x.facet.nestline = element_line(colour = "black"))  # center strip text
 
 
-
+ggsave("figure_3_correct.svg", width = 26, height =19, unit = "cm")
                   
