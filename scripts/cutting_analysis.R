@@ -58,9 +58,9 @@ mosaic.model.1 <- glmmTMB((cbind(win1,loss1))~ Cas9_parent+Cas9_grandparent+Line
 
 ## Figure====
 
-cutting_summary <- emmeans::emmeans(cut.model.1, specs=pairwise~Cas9_parent+Cas9_grandparent+Line+Cas9_parent:Cas9_grandparent+Cas9_parent:Line+Cas9_grandparent:Line, type="response") %>% .$emmeans %>% as_tibble() %>% bind_cols(homing_or_cutting="cutting")
+homing_summary <- emmeans::emmeans(cut.model.1, specs=pairwise~Cas9_parent+Cas9_grandparent+Line+Cas9_parent:Cas9_grandparent+Cas9_parent:Line+Cas9_grandparent:Line, type="response") %>% .$emmeans %>% as_tibble() %>% bind_cols(homing_or_cutting="homing")
 
-homing_summary <- emmeans::emmeans(mosaic.model.1, specs=pairwise~Cas9_parent+Cas9_grandparent+Line+Cas9_parent:Cas9_grandparent+Cas9_parent:Line+Cas9_grandparent:Line, type="response") %>% .$emmeans %>% as_tibble() %>% bind_cols(homing_or_cutting="homing")
+cutting_summary <- emmeans::emmeans(mosaic.model.1, specs=pairwise~Cas9_parent+Cas9_grandparent+Line+Cas9_parent:Cas9_grandparent+Cas9_parent:Line+Cas9_grandparent:Line, type="response") %>% .$emmeans %>% as_tibble() %>% bind_cols(homing_or_cutting="cutting")
 
 total_CI <- rbind(cutting_summary, homing_summary) %>% 
   mutate(Cas9_parent = factor(Cas9_parent, levels=c("Female", "Male"), labels=c("\u2640", "\u2642"))) %>%
@@ -76,7 +76,7 @@ custom_labeller <- labeller(
 )
 
 cutting_data_model %>% 
-  mutate(cutting=((win1/(win+loss))*100)) %>% 
+  mutate(cutting=((win1/(win1+loss1))*100)) %>% 
   mutate(homing=((win/(win+loss)*100))) %>% 
   mutate(Cas9_parent = factor(Cas9_parent, levels=c("Female", "Male"), labels=c("\u2640", "\u2642"))) %>%
   mutate(Cas9_grandparent = factor(Cas9_grandparent, levels=c("Female", "Male"), labels=c("\u2640", "\u2642"))) %>%
